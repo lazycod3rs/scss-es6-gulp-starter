@@ -47,19 +47,11 @@ export function scripts() {
         .pipe(gulp.dest(dest));
 }
 
-/*
- * You could even use `export as` to rename exported tasks
- */
-function watchFiles() {
+export const build = gulp.series(gulp.parallel(styles, scripts));
+
+export const watch = () => {
     gulp.watch(paths.scripts.src, scripts);
     gulp.watch(paths.styles.src, styles);
 }
-export {
-    watchFiles as watch
-};
 
-const build = gulp.series(gulp.parallel(styles, scripts));
-/*
- * Export a default task
- */
-export default build;
+export default gulp.series(gulp.parallel(styles, scripts, watch));
