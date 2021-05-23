@@ -1,13 +1,11 @@
 import gulp from 'gulp';
-import scss from 'gulp-sass';
-import babel from 'gulp-babel';
-import concat from 'gulp-concat';
-import uglify from 'gulp-uglify';
-import rename from 'gulp-rename';
-import cleanCSS from 'gulp-clean-css';
-import uncss from 'gulp-uncss';
-import autoprefixer  from 'gulp-autoprefixer';
+import plugins from 'gulp-load-plugins';
+import yargs from 'yargs';
 
+const $ = plugins();
+
+// Check for --production flag
+const PRODUCTION = !!(yargs.argv.production);
 
 const paths = {
     styles: {
@@ -26,24 +24,26 @@ const dest = './build'
 export function styles() {
 
     return gulp.src(paths.styles.src)
-        .pipe(scss())
-        .pipe(autoprefixer())
-        .pipe(uncss({html: ['*.html']}))
-        .pipe(cleanCSS({ compatibility: 'ie9' }))
+        .pipe($.if(!PRODUCTION, $.sourcemaps.init()))
+        .pipe($.sass())
+        .pipe($.autoprefixer())
+        .pipe($.if(PRODUCTION, $.uncss({html: ['*.html']})))
+        .pipe($.if(PRODUCTION, $.cleanCss({ compatibility: 'ie9' })))
         // pass in options to the stream
-        .pipe(rename({
+        .pipe($.rename({
             basename: 'app',
         }))
+        .pipe($.sourcemaps.write())
         .pipe(gulp.dest(dest));
 }
 
 export function scripts() {
-    return gulp.src(paths.scripts.src, {
-            sourcemaps: true
-        })
-        .pipe(babel())
-        .pipe(uglify())
-        .pipe(concat('app.js'))
+    return gulp.src(paths.scripts.src)
+        .pipe($.sourcemaps.init())
+        .pipe($.babel())
+        .pipe($.if(PRODUCTION, $.uglify()))
+        .pipe($.concat('app.js'))
+        .pipe($.if(!PRODUCTION, $.sourcemaps.write()))
         .pipe(gulp.dest(dest));
 }
 

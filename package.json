@@ -16,10 +16,14 @@
     "gulp-babel": "^8.0.0",
     "gulp-clean-css": "^4.3.0",
     "gulp-concat": "^2.6.1",
+    "gulp-if": "^3.0.0",
+    "gulp-load-plugins": "^2.0.6",
     "gulp-rename": "^2.0.0",
     "gulp-sass": "^4.1.0",
+    "gulp-sourcemaps": "^3.0.0",
     "gulp-uglify": "^3.0.2",
-    "gulp-uncss": "^1.0.6"
+    "gulp-uncss": "^1.0.6",
+    "yargs": "^17.0.1"
   },
   "dependencies": {}
 }
