@@ -1,6 +1,7 @@
 import gulp from 'gulp';
 import plugins from 'gulp-load-plugins';
 import yargs from 'yargs';
+import browser from 'browser-sync';
 
 const $ = plugins();
 
@@ -47,11 +48,24 @@ export function scripts() {
         .pipe(gulp.dest(dest));
 }
 
+const server = (done) => {
+    browser.init({
+        server: './',
+        port: 8000
+    },done)
+}
+
+const reload = (done) => {
+    browser.reload();
+    done();
+}
+
 export const build = gulp.series(gulp.parallel(styles, scripts));
 
 export const watch = () => {
-    gulp.watch(paths.scripts.src, scripts);
-    gulp.watch(paths.styles.src, styles);
+    gulp.watch(paths.scripts.src, gulp.series(scripts, reload));
+    gulp.watch(paths.styles.src, gulp.series(styles, reload));
+    gulp.watch('./*.html', reload);
 }
 
-export default gulp.series(gulp.parallel(styles, scripts, watch));
+export default gulp.series(gulp.parallel(styles, scripts, server, watch));
